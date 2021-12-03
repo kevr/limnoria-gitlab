@@ -71,17 +71,17 @@ conf.registerChannelValue(Gitlab.format, 'tag',
                           registry.String(_("""\x02[{project[name]}]\x02 {user_name} created a new tag {ref}"""),
                                           _("""Format for tag push events.""")))
 
-conf.registerChannelValue(Gitlab.format, 'issue-opened',
-                          registry.String(_("""\x02[{project[name]}]\x02 Issue \x02#{issue[id]} {issue[title]}\x02 created by {user[name]} {issue[url]}"""),
+conf.registerChannelValue(Gitlab.format, 'issue-open',
+                          registry.String(_("""\x02[{project[name]}]\x02 Issue \x02#{issue[iid]} {issue[title]}\x02 created by {user[name]} {issue[url]}"""),
                                           _("""Format for issue/open events.""")))
-conf.registerChannelValue(Gitlab.format, 'issue-updated',
-                          registry.String(_("""\x02[{project[name]}]\x02 Issue \x02#{issue[id]} {issue[title]}\x02 updated by {user[name]} {issue[url]}"""),
+conf.registerChannelValue(Gitlab.format, 'issue-update',
+                          registry.String(_("""\x02[{project[name]}]\x02 Issue \x02#{issue[iid]} {issue[title]}\x02 updated by {user[name]} {issue[url]}"""),
                                           _("""Format for issue/update events.""")))
-conf.registerChannelValue(Gitlab.format, 'issue-closed',
-                          registry.String(_("""\x02[{project[name]}]\x02 Issue \x02#{issue[id]} {issue[title]}\x02 closed by {user[name]} {issue[url]}"""),
+conf.registerChannelValue(Gitlab.format, 'issue-close',
+                          registry.String(_("""\x02[{project[name]}]\x02 Issue \x02#{issue[iid]} {issue[title]}\x02 closed by {user[name]} {issue[url]}"""),
                                           _("""Format for issue/close events.""")))
-conf.registerChannelValue(Gitlab.format, 'issue-reopened',
-                          registry.String(_("""\x02[{project[name]}]\x02 Issue \x02#{issue[id]} {issue[title]}\x02 reopend by {user[name]} {issue[url]}"""),
+conf.registerChannelValue(Gitlab.format, 'issue-reopen',
+                          registry.String(_("""\x02[{project[name]}]\x02 Issue \x02#{issue[iid]} {issue[title]}\x02 reopend by {user[name]} {issue[url]}"""),
                                           _("""Format for issue/reopen events.""")))
 
 conf.registerChannelValue(Gitlab.format, 'merge-request-open',

@@ -180,8 +180,8 @@ class GitlabHandler(object):
         self._send_message(channel, msg)
 
     def _issue_hook(self, channel, payload):
-        action = payload['object_attributes']['state']
-        if action not in ['opened', 'updated', 'closed', 'reopened']:
+        action = payload['object_attributes']['action']
+        if action not in ['open', 'update', 'close', 'reopen']:
             self.log.info("Unsupported issue action '%s'" % action)
             return
 
