@@ -29,17 +29,19 @@
 ###
 
 import json
+import os
 
-from supybot.commands import wrap
+import supybot.callbacks as callbacks
+import supybot.httpserver as httpserver
 import supybot.ircdb as ircdb
 import supybot.ircmsgs as ircmsgs
-import supybot.callbacks as callbacks
 import supybot.log as log
-import supybot.httpserver as httpserver
 import supybot.world as world
+from supybot.commands import wrap
+
 try:
-    from supybot.i18n import PluginInternationalization
-    from supybot.i18n import internationalizeDocstring
+    from supybot.i18n import (PluginInternationalization,
+                              internationalizeDocstring)
     _ = PluginInternationalization('Gitlab')
 except ImportError:
     # Placeholder that allows to run the plugin on a bot
@@ -49,6 +51,12 @@ except ImportError:
 
     def internationalizeDocstring(x):
         return x
+
+secret = None
+SECRET_PATH = os.path.join(os.environ.get("HOME"), ".gitlab-secret")
+if os.path.exists(SECRET_PATH):
+    with open(SECRET_PATH) as f:
+        secret = f.read().strip()
 
 
 class GitlabHandler(object):
@@ -67,6 +75,10 @@ class GitlabHandler(object):
             return
         self.irc = irc
         self.log.debug('GitLab: running on network %r', irc.network)
+
+        token = headers['X-Gitlab-Token']
+        if token != secret:
+            return
 
         event_type = headers['X-Gitlab-Event']
         if event_type not in ['Push Hook', 'Tag Push Hook', 'Note Hook', 'Issue Hook', 'Merge Request Hook']:
@@ -168,7 +180,7 @@ class GitlabHandler(object):
         self._send_message(channel, msg)
 
     def _issue_hook(self, channel, payload):
-        action = payload['object_attributes']['action']
+        action = payload['object_attributes']['state']
         if action not in ['opened', 'updated', 'closed', 'reopened']:
             self.log.info("Unsupported issue action '%s'" % action)
             return
@@ -243,7 +255,8 @@ class GitlabWebHookService(httpserver.SupyHTTPServerCallback):
 
         irc = world.getIrc(network)
         if irc is None:
-            self._send_error(handler, (_('Error: Unknown network %r') % network))
+            self._send_error(
+                handler, (_('Error: Unknown network %r') % network))
             return
 
         # Handle payload
